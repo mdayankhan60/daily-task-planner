@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Task Planner - Productivity Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ===== TOP HEADER ===== -->
+    <header class="header-section text-white py-3 shadow-sm">
+        <div class="container-fluid container-xl">
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon">
+                        <i class="bi bi-calendar-check-fill fs-2"></i>
+                    </div>
+                    <div>
+                        <h1 class="h3 fw-bold mb-0 tracking-tight">Daily Task Planner</h1>
+                        <p class="mb-0 text-white-50 small">Manage your daily tasks, stay organized, and boost productivity</p>
+                    </div>
+                </div>
+                <!-- Live Date & Clock Badge in Header -->
+                <div class="live-clock-card d-flex align-items-center gap-3 px-3 py-2 rounded-3">
+                    <div class="text-end">
+                        <div id="current-day" class="fw-bold small text-uppercase text-warning"></div>
+                        <div id="current-date" class="small text-white"></div>
+                    </div>
+                    <div class="vr bg-white opacity-25" style="height: 32px;"></div>
+                    <div id="current-time" class="fs-4 fw-bold text-white tracking-wider"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="container-fluid container-xl my-4">
+
+        <!-- ===== TOP STATISTICS DASHBOARD BAR ===== -->
+        <div class="row g-3 mb-4">
+            <!-- Total Tasks -->
+            <div class="col-6 col-md-3">
+                <div class="stat-card stat-total card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center gap-3 p-3">
+                        <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-journal-text fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="d-block text-muted small fw-medium">Total Tasks</span>
+                            <span id="stat-total" class="h3 fw-bold mb-0 text-dark">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pending Tasks -->
+            <div class="col-6 col-md-3">
+                <div class="stat-card stat-pending card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center gap-3 p-3">
+                        <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-hourglass-split fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="d-block text-muted small fw-medium">Pending</span>
+                            <span id="stat-pending" class="h3 fw-bold mb-0 text-warning">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Completed Tasks -->
+            <div class="col-6 col-md-3">
+                <div class="stat-card stat-completed card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center gap-3 p-3">
+                        <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-check2-circle fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="d-block text-muted small fw-medium">Completed</span>
+                            <span id="stat-completed" class="h3 fw-bold mb-0 text-success">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Progress Bar -->
+            <div class="col-6 col-md-3">
+                <div class="stat-card stat-progress card border-0 shadow-sm h-100">
+                    <div class="card-body p-3 d-flex flex-column justify-content-center">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-muted small fw-medium">Completion Rate</span>
+                            <span id="progress-percent" class="fw-bold text-primary small">0%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div id="progress-bar" class="progress-bar bg-primary progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ===== LEFT COLUMN: Tasks Management (Width 8) ===== -->
+            <div class="col-lg-8">
+
+                <!-- 1. Add Task Card -->
+                <div class="card shadow-sm border-0 mb-4 add-task-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="card-title fw-bold mb-0 text-dark">
+                                <i class="bi bi-plus-circle-fill text-primary me-2"></i>Add New Task
+                            </h5>
+                            <span class="badge bg-light text-muted fw-normal border">Press Enter ↵ to add</span>
+                        </div>
+                        <form id="task-form" onsubmit="return false;" novalidate>
+                            <div class="input-group input-group-lg shadow-none">
+                                <input type="text" id="task-input" class="form-control" placeholder="What task do you want to accomplish today?" aria-label="Task title" maxlength="200" autocomplete="off">
+                                <button class="btn btn-primary px-4 fw-semibold" type="button" id="btn-add-task" onclick="addTask()">
+                                    <i class="bi bi-plus-lg me-1"></i> Add Task
+                                </button>
+                            </div>
+                            <div id="input-error" class="invalid-feedback d-none mt-2 fw-medium">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i> Please enter a task title before adding.
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 2. Search, Filter & Quick Actions Toolbar -->
+                <div class="card shadow-sm border-0 mb-4 toolbar-card">
+                    <div class="card-body p-3">
+                        <div class="row g-2 align-items-center">
+                            <!-- Search Input -->
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="search-input" class="form-control bg-light border-start-0" placeholder="Search tasks by title..." oninput="renderTasks()">
+                                    <button class="btn btn-light border border-start-0 text-muted d-none" id="btn-clear-search" type="button" onclick="clearSearch()" title="Clear search">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Filter Buttons -->
+                            <div class="col-md-7 d-flex align-items-center justify-content-md-end flex-wrap gap-2">
+                                <div class="btn-group filter-group shadow-none" role="group" aria-label="Task filter">
+                                    <button type="button" class="btn btn-outline-primary active btn-sm px-3" data-filter="all" onclick="setFilter('all', this)">
+                                        All <span class="badge bg-primary text-white ms-1" id="filter-badge-all">0</span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-warning btn-sm px-3" data-filter="pending" onclick="setFilter('pending', this)">
+                                        Pending <span class="badge bg-warning text-dark ms-1" id="filter-badge-pending">0</span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success btn-sm px-3" data-filter="completed" onclick="setFilter('completed', this)">
+                                        Done <span class="badge bg-success text-white ms-1" id="filter-badge-completed">0</span>
+                                    </button>
+                                </div>
+
+                                <!-- Clear Completed Button -->
+                                <button id="btn-clear-completed" class="btn btn-sm btn-outline-danger" onclick="clearCompleted()" title="Remove all completed tasks">
+                                    <i class="bi bi-trash3"></i> <span class="d-none d-sm-inline">Clear Completed</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Task List Section Header & Tasks Container -->
+                <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+                    <h6 class="fw-bold text-muted text-uppercase small tracking-wider mb-0" id="task-list-heading">
+                        <i class="bi bi-list-task me-1"></i> Your Tasks
+                    </h6>
+                    <span class="small text-muted" id="task-count-hint">Showing all tasks</span>
+                </div>
+
+                <!-- Task List Container -->
+                <div id="task-list" class="task-list-container">
+                    <!-- Tasks rendered dynamically by script.js -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="card border-0 shadow-sm text-center py-5 d-none">
+                    <div class="card-body">
+                        <div class="empty-icon-circle mx-auto mb-3">
+                            <i class="bi bi-clipboard2-check text-muted fs-1"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark" id="empty-title">No tasks found</h5>
+                        <p class="text-muted small mb-3" id="empty-message">You have no tasks in this view. Add a task above to get started!</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ===== RIGHT COLUMN: Profile & Details (Width 4) ===== -->
+            <div class="col-lg-4">
+
+                <!-- Profile Card -->
+                <div class="card shadow-sm border-0 profile-card mb-4">
+                    <div class="card-body p-4 text-center">
+                        <div class="profile-avatar-wrapper position-relative mx-auto mb-3">
+                            <div class="profile-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <span class="status-indicator" title="Online / Active"></span>
+                        </div>
+
+                        <h5 class="fw-bold text-dark mb-1">Mohammed Ayan Khan</h5>
+                        <div class="d-flex justify-content-center flex-wrap gap-1 mb-3">
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                <i class="bi bi-mortarboard-fill me-1"></i>BE in CSE (2023–2027)
+                            </span>
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Fresher</span>
+                        </div>
+
+                        <hr class="my-3 opacity-25">
+
+                        <!-- Information Details -->
+                        <div class="profile-details text-start small">
+                            <div class="detail-row d-flex align-items-start gap-2 py-2 border-bottom border-light-subtle">
+                                <i class="bi bi-geo-alt-fill text-danger fs-6 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <span class="text-muted d-block" style="font-size: 0.72rem;">LOCATION</span>
+                                    <span class="fw-medium text-dark">Shivara Patna, Malur(T), Kolar(D)</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-row d-flex align-items-start gap-2 py-2 border-bottom border-light-subtle">
+                                <i class="bi bi-telephone-fill text-success fs-6 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <span class="text-muted d-block" style="font-size: 0.72rem;">PHONE</span>
+                                    <a href="tel:9740583903" class="fw-medium text-decoration-none text-dark">9740583903</a>
+                                </div>
+                            </div>
+
+                            <div class="detail-row d-flex align-items-start gap-2 py-2 border-bottom border-light-subtle">
+                                <i class="bi bi-envelope-fill text-primary fs-6 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <span class="text-muted d-block" style="font-size: 0.72rem;">EMAIL</span>
+                                    <a href="mailto:ayankhanmohammed100@gmail.com" class="fw-medium text-decoration-none text-dark text-break">ayankhanmohammed100@gmail.com</a>
+                                </div>
+                            </div>
+
+                            <div class="detail-row d-flex align-items-start gap-2 py-2 border-bottom border-light-subtle">
+                                <i class="bi bi-translate text-info fs-6 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <span class="text-muted d-block" style="font-size: 0.72rem;">LANGUAGES</span>
+                                    <span class="fw-medium text-dark">Kannada, Hindi, English</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-row d-flex align-items-start gap-2 py-2">
+                                <i class="bi bi-github text-dark fs-6 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <span class="text-muted d-block" style="font-size: 0.72rem;">GITHUB</span>
+                                    <a href="https://github.com/mdayankhan60" target="_blank" rel="noopener noreferrer" class="fw-semibold text-primary text-decoration-none text-break">github.com/mdayankhan60</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GitHub Button -->
+                        <a href="https://github.com/mdayankhan60" target="_blank" rel="noopener noreferrer" class="btn btn-dark w-100 btn-sm mt-3 py-2 fw-medium">
+                            <i class="bi bi-github me-1"></i> Visit GitHub Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Productivity Tips Card -->
+                <div class="card shadow-sm border-0 tip-card">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-lightbulb-fill text-warning fs-5"></i>
+                            <h6 class="fw-bold mb-0 text-dark">Productivity Tips</h6>
+                        </div>
+                        <ul class="text-muted small ps-3 mb-0">
+                            <li class="mb-1">Click the status badge or checkmark to toggle between <strong>Pending</strong> and <strong>Completed</strong>.</li>
+                            <li class="mb-1">Use <strong>Edit</strong> to rename or switch task status at any time.</li>
+                            <li>All your tasks are safely saved in your browser automatically.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer-section py-4 mt-auto">
+        <div class="container text-center">
+            <p class="mb-1 text-muted small">
+                &copy; 2026 <strong>Daily Task Planner</strong> &mdash; Designed &amp; Developed with Bootstrap 5 &amp; Vanilla JavaScript
+            </p>
+            <p class="mb-0 text-muted small">
+                Created by <a href="https://github.com/mdayankhan60" target="_blank" rel="noopener noreferrer" class="text-primary fw-semibold text-decoration-none">Mohammed Ayan Khan</a> &bull; BE in CSE
+            </p>
+        </div>
+    </footer>
+
+    <!-- ===== CONFIRM DELETE MODAL ===== -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h6 class="modal-title fw-bold" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-1"></i> Delete Task</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-trash3 text-danger fs-1 d-block mb-2"></i>
+                    <p class="mb-1 fw-semibold text-dark">Are you sure you want to delete this task?</p>
+                    <p class="text-muted small mb-0">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pt-0">
+                    <button type="button" class="btn btn-light btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger btn-sm px-3 fw-semibold" id="btn-confirm-delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONFIRM CLEAR COMPLETED MODAL ===== -->
+    <div class="modal fade" id="clearModal" tabindex="-1" aria-labelledby="clearModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h6 class="modal-title fw-bold" id="clearModalLabel"><i class="bi bi-trash3-fill me-1"></i> Clear Completed</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-check2-all text-danger fs-1 d-block mb-2"></i>
+                    <p class="mb-1 fw-semibold text-dark">Clear all completed tasks?</p>
+                    <p class="text-muted small mb-0">All tasks marked as completed will be permanently deleted.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pt-0">
+                    <button type="button" class="btn btn-light btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger btn-sm px-3 fw-semibold" id="btn-confirm-clear">Clear All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>
